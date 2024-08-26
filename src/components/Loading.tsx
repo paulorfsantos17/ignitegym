@@ -1,10 +1,9 @@
-import { Center, Spinner } from "@gluestack-ui/themed";
+import { Center, Spinner } from '@gluestack-ui/themed'
 
-
-export  function Loading() {
+export function Loading() {
   return (
-    <Center flex={1} bg="$gray700" >
-      <Spinner color="green500"/>
+    <Center flex={1} bg="$gray700">
+      <Spinner color="green500" />
     </Center>
   )
 }
