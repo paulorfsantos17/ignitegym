@@ -3,9 +3,9 @@ import { ComponentProps } from 'react'
 
 type GroupProps = ComponentProps<typeof Button> & {
   name: string
-  isActive?: boolean
+  isActive: boolean
 }
-export default function Group({ name, isActive = false, ...rest }: GroupProps) {
+export default function Group({ name, isActive, ...rest }: GroupProps) {
   return (
     <Button
       minWidth="$24"
@@ -23,7 +23,7 @@ export default function Group({ name, isActive = false, ...rest }: GroupProps) {
       {...rest}
     >
       <Text
-        color={isActive ? '$green500' : 'gray200'}
+        color={isActive ? '$green500' : '$gray200'}
         textTransform="uppercase"
         fontSize="$xs"
         fontFamily="$heading"
