@@ -1,12 +1,30 @@
 import Group from '@components/Group'
 import HomeHeader from '@components/HomeHeader'
-import { VStack } from '@gluestack-ui/themed'
+import { HStack, VStack } from '@gluestack-ui/themed'
+import { useState } from 'react'
 
 export function Home() {
+  const [groupSelected, setGroupSelected] = useState('biceps')
   return (
     <VStack>
       <HomeHeader />
-      <Group name="Biceps" isActive={true} />
+      <HStack gap="$3">
+        <Group
+          name="Biceps"
+          isActive={groupSelected === 'biceps'}
+          onPress={() => setGroupSelected('biceps')}
+        />
+        <Group
+          name="Costa"
+          isActive={groupSelected === 'costa'}
+          onPress={() => setGroupSelected('costa')}
+        />
+        <Group
+          name="Perna"
+          isActive={groupSelected === 'perna'}
+          onPress={() => setGroupSelected('perna')}
+        />
+      </HStack>
     </VStack>
   )
 }
