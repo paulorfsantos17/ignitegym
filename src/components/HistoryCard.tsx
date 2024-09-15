@@ -12,12 +12,13 @@ export default function HistoryCard() {
       alignItems="center"
       justifyContent="space-between"
     >
-      <VStack>
+      <VStack flex={1}>
         <Heading
           color="$white"
           fontSize="$md"
           fontFamily="$heading"
           textTransform="capitalize"
+          numberOfLines={1}
         >
           Costas
         </Heading>
