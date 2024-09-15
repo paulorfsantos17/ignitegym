@@ -1,7 +1,9 @@
 import { ExerciseCard } from '@components/ExerciseCard'
 import Group from '@components/Group'
 import HomeHeader from '@components/HomeHeader'
-import { Text, Heading, HStack, VStack } from '@gluestack-ui/themed'
+import { Heading, HStack, Text, VStack } from '@gluestack-ui/themed'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { useState } from 'react'
 import { FlatList } from 'react-native'
 
@@ -14,6 +16,13 @@ export function Home() {
     'Puxada Terra',
   ])
   const [groupSelected, setGroupSelected] = useState('Costas')
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  function handleOpenExercisesDetails() {
+    navigation.navigate('exercise')
+  }
+
   return (
     <VStack flex={1}>
       <HomeHeader />
@@ -33,6 +42,7 @@ export function Home() {
         contentContainerStyle={{ paddingHorizontal: 32 }}
         style={{ marginVertical: 40, maxHeight: 44, minHeight: 44 }}
       />
+
       <VStack px="$8" flex={1}>
         <HStack justifyContent="space-between" mb="$4" alignItems="center">
           <Heading color="$gray200" fontSize="$md" fontFamily="$heading">
@@ -42,10 +52,13 @@ export function Home() {
             {exercises.length}
           </Text>
         </HStack>
+
         <FlatList
           data={exercises}
           keyExtractor={(item) => item}
-          renderItem={({ item }) => <ExerciseCard name={item} />}
+          renderItem={({ item }) => (
+            <ExerciseCard name={item} onPress={handleOpenExercisesDetails} />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
         />

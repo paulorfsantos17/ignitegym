@@ -1,10 +1,10 @@
 import {
-  VStack,
-  Image,
-  HStack,
   Heading,
-  Text,
+  HStack,
   Icon,
+  Image,
+  Text,
+  VStack,
 } from '@gluestack-ui/themed'
 import { ChevronRight } from 'lucide-react-native'
 import { TouchableOpacity, type TouchableOpacityProps } from 'react-native'
