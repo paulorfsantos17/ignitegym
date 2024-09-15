@@ -1,7 +1,7 @@
 import {
-  Text,
   Button as GluestackButton,
   ButtonSpinner,
+  Text,
 } from '@gluestack-ui/themed'
 import type { ComponentProps } from 'react'
 
