@@ -12,6 +12,8 @@ import {
 } from '@gluestack-ui/themed'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigation } from '@react-navigation/native'
+import { api } from '@services/api'
+import { AxiosError } from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
@@ -50,13 +52,19 @@ export function SignUp() {
     navigator.goBack()
   }
 
-  function handleSignUp({
-    name,
-    email,
-    password,
-    confirmPassword,
-  }: FormDataSchema) {
-    console.log('🚀 ~ SignUp ~ data:', name, email, password, confirmPassword)
+  async function handleSignUp({ name, email, password }: FormDataSchema) {
+    try {
+      const response = await api.post('/users', {
+        name,
+        email,
+        password,
+      })
+      console.log('🚀 ~ handleSignUp ~ response:', response)
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log('🚀 ~ handleSignUp ~ error:', error)
+      }
+    }
   }
 
   return (
