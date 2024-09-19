@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { AuthContext } from '@contexts/AuthContext'
+import { AuthContext, AuthContextProvider } from '@contexts/AuthContext'
 import {
   Roboto_400Regular,
   Roboto_700Bold,
@@ -23,9 +23,8 @@ export default function App() {
         translucent
       />
       {!fontsLoaded && <Loading />}
-      <AuthContext.Provider value={{}}>
-        {fontsLoaded && <Routes />}
-      </AuthContext.Provider>
+
+      <AuthContextProvider>{fontsLoaded && <Routes />}</AuthContextProvider>
     </GluestackUIProvider>
   )
 }
