@@ -1,5 +1,9 @@
 import { api } from '@services/api'
-import { storageUserGet, storageUserSave } from '@storage/storageUser'
+import {
+  storageUserGet,
+  storageUserRemove,
+  storageUserSave,
+} from '@storage/storageUser'
 import { AppError } from '@utils/AppError'
 import { createContext, type ReactNode, useEffect, useState } from 'react'
 
@@ -8,6 +12,7 @@ export interface AuthContextDataProps {
   user: UserDTO
   signIn: (email: string, password: string) => Promise<void>
   isLoadingUserStorageData: boolean
+  signOut: () => Promise<void>
 }
 interface AuthContextProviderProps {
   children: ReactNode
@@ -27,6 +32,18 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function signOut() {
+    try {
+      setIsLoadingUserStorageData(true)
+      setUser({} as UserDTO)
+      await storageUserRemove()
+    } catch (error) {
+      throw new AppError('Error ao sair da conta. Tente novamente mais tarde.')
+    } finally {
+      setIsLoadingUserStorageData(false)
+    }
+  }
+
   async function loadUserData() {
     try {
       const userLogged = await storageUserGet()
@@ -38,6 +55,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       throw new AppError(
         'Erro ao carregar usuário. tente novamente mais tarde.',
       )
+    } finally {
+      setIsLoadingUserStorageData(false)
     }
   }
 
@@ -46,7 +65,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, signIn, isLoadingUserStorageData }}>
+    <AuthContext.Provider
+      value={{ user, signIn, isLoadingUserStorageData, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   )
