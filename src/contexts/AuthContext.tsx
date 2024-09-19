@@ -1,4 +1,4 @@
-import { Children, createContext } from 'react'
+import { createContext, type ReactNode } from 'react'
 
 import { UserDTO } from '../dtos/UserDTO'
 export interface AuthContextDataProps {
