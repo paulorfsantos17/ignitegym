@@ -2,17 +2,22 @@ import BackgroundImg from '@assets/background.png'
 import Logo from '@assets/logo.svg'
 import Button from '@components/Button'
 import { Input } from '@components/Input'
+import ToastMessage from '@components/ToastMessage'
 import {
   Center,
   Heading,
   Image,
   ScrollView,
   Text,
+  useToast,
   VStack,
 } from '@gluestack-ui/themed'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useAuth } from '@hooks/useAuth'
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigationRoutesProps } from '@routes/auth.routes'
+import { AppError } from '@utils/AppError'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 
@@ -27,6 +32,11 @@ const signInSchema = yup.object({
 type FormDataSchema = yup.InferType<typeof signInSchema>
 
 export function SignIn() {
+  const toast = useToast()
+  const { signIn } = useAuth()
+
+  const [isLoading, setIsLoading] = useState(false)
+
   const {
     control,
     handleSubmit,
@@ -41,8 +51,32 @@ export function SignIn() {
     navigator.navigate('signUp')
   }
 
-  function handleSignIn({ email, password }: FormDataSchema) {
-    console.log('��� ~ SignIn ~ data:', email, password)
+  async function handleSignIn({ email, password }: FormDataSchema) {
+    try {
+      setIsLoading(true)
+      await signIn(email, password)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível entrar. Tente novamente mais tarde.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          return (
+            <ToastMessage
+              id={id}
+              title={title}
+              onClose={() => toast.close(id)}
+              action="error"
+            />
+          )
+        },
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <ScrollView
@@ -95,7 +129,11 @@ export function SignIn() {
                 />
               )}
             />
-            <Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
+            <Button
+              title="Acessar"
+              onPress={handleSubmit(handleSignIn)}
+              isLoading={isLoading}
+            />
           </Center>
 
           <Center flex={1} justifyContent="flex-end" mt="$4">

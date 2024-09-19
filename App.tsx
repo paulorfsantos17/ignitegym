@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { AuthContext, AuthContextProvider } from '@contexts/AuthContext'
+import { AuthContextProvider } from '@contexts/AuthContext'
 import {
   Roboto_400Regular,
   Roboto_700Bold,
