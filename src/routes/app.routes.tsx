@@ -15,7 +15,7 @@ import { Platform } from 'react-native'
 
 interface AppRoutesProps extends ParamListBase {
   home: undefined
-  exercise: undefined
+  exercise: { exerciseId: string }
   profile: undefined
   history: undefined
 }
