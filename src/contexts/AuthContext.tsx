@@ -1,6 +1,7 @@
 import { api } from '@services/api'
 import {
   storageAuthTokenGet,
+  storageAuthTokenRemove,
   storageAuthTokenSave,
 } from '@storage/storageAuthToken'
 import {
@@ -42,7 +43,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         'Error ao salvar dados do usuário. Tente novamente mais tarde.',
       )
     } finally {
-      setIsLoadingUserStorageData(true)
+      setIsLoadingUserStorageData(false)
     }
   }
 
@@ -52,7 +53,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       await storageUserAndTokenSave(data.user, data.token)
       userAndTokenUpdate(data.user, data.token)
     }
-    setIsLoadingUserStorageData(true)
+    setIsLoadingUserStorageData(false)
   }
 
   async function signOut() {
