@@ -36,7 +36,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function storageUserAndTokenSave(userData: UserDTO, token: string) {
     try {
       setIsLoadingUserStorageData(true)
-      await storageUserSave(user)
+      await storageUserSave(userData)
       await storageAuthTokenSave(token)
     } catch (error) {
       throw new AppError(
@@ -72,7 +72,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function loadUserData() {
     try {
       const userLogged = await storageUserGet()
+
       const token = await storageAuthTokenGet()
+
       if (token && userLogged.id) {
         userAndTokenUpdate(userLogged, token)
       }
