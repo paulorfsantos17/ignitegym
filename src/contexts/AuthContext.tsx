@@ -1,5 +1,9 @@
 import { api } from '@services/api'
 import {
+  storageAuthTokenGet,
+  storageAuthTokenSave,
+} from '@storage/storageAuthToken'
+import {
   storageUserGet,
   storageUserRemove,
   storageUserSave,
@@ -24,17 +28,37 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO)
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
+  async function userAndTokenUpdate(userData: UserDTO, token: string) {
+    setUser(userData)
+    api.defaults.headers.common.Authorization = `Bearer ${token}`
+  }
+  async function storageUserAndTokenSave(userData: UserDTO, token: string) {
+    try {
+      setIsLoadingUserStorageData(true)
+      await storageUserSave(user)
+      await storageAuthTokenSave(token)
+    } catch (error) {
+      throw new AppError(
+        'Error ao salvar dados do usuário. Tente novamente mais tarde.',
+      )
+    } finally {
+      setIsLoadingUserStorageData(true)
+    }
+  }
+
   async function signIn(email: string, password: string) {
     const { data } = await api.post('/sessions', { email, password })
-    if (data.user) {
-      setUser(data.user)
-      storageUserSave(data.user)
+    if (data.user && data.token) {
+      await storageUserAndTokenSave(data.user, data.token)
+      userAndTokenUpdate(data.user, data.token)
     }
+    setIsLoadingUserStorageData(true)
   }
 
   async function signOut() {
     try {
       setIsLoadingUserStorageData(true)
+      await storageAuthTokenRemove()
       setUser({} as UserDTO)
       await storageUserRemove()
     } catch (error) {
@@ -47,9 +71,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function loadUserData() {
     try {
       const userLogged = await storageUserGet()
-      if (userLogged.id) {
-        setIsLoadingUserStorageData(false)
-        setUser(userLogged)
+      const token = await storageAuthTokenGet()
+      if (token && userLogged.id) {
+        userAndTokenUpdate(userLogged, token)
       }
     } catch (error) {
       throw new AppError(
