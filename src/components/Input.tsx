@@ -8,11 +8,11 @@ import {
 import type { ComponentProps } from 'react'
 interface InputProps extends ComponentProps<typeof InputField> {
   errorMessage?: string | null
-  isReadOnly?: boolean
+  isDisabled?: boolean
   isInvalid?: boolean
 }
 export function Input({
-  isReadOnly = false,
+  isDisabled = false,
   errorMessage = null,
   isInvalid = false,
   ...rest
@@ -30,7 +30,7 @@ export function Input({
           borderColor: invalid ? '$red500' : '$green500',
         }}
         $invalid={{ borderWidth: 1, borderColor: '$red500' }}
-        isReadOnly={isReadOnly}
+        isDisabled={isDisabled}
       >
         <InputField
           bg="$gray700"
@@ -38,6 +38,7 @@ export function Input({
           color="$white"
           fontFamily="$body"
           placeholderTextColor="$gray300"
+          $disabled-bgColor="$gray500"
           {...rest}
         />
       </GluestackInput>

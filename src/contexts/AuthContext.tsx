@@ -18,6 +18,7 @@ export interface AuthContextDataProps {
   signIn: (email: string, password: string) => Promise<void>
   isLoadingUserStorageData: boolean
   signOut: () => Promise<void>
+  updateUserProfile: (userUpdate: UserDTO) => Promise<void>
 }
 interface AuthContextProviderProps {
   children: ReactNode
@@ -69,6 +70,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function updateUserProfile(userUpdate: UserDTO) {
+    try {
+      setUser(userUpdate)
+      await storageUserSave(userUpdate)
+    } catch (error) {
+      throw new AppError('Error ao atualizar o usuário.')
+    }
+  }
+
   async function loadUserData() {
     try {
       const userLogged = await storageUserGet()
@@ -93,7 +103,13 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, signIn, isLoadingUserStorageData, signOut }}
+      value={{
+        user,
+        signIn,
+        isLoadingUserStorageData,
+        signOut,
+        updateUserProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>
