@@ -1,3 +1,4 @@
+import UserImageDefault from '@assets/userPhotoDefault.png'
 import Button from '@components/Button'
 import { Input } from '@components/Input'
 import ScreenHeader from '@components/ScreenHeader'
@@ -14,6 +15,12 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView, TouchableOpacity } from 'react-native'
 import * as yup from 'yup'
+
+interface PhotoFileProps {
+  uri: string
+  type?: string
+  name: string
+}
 
 const profileSchema = yup.object({
   email: yup.string().email('Email inválido').required('Email é obrigatório'),
@@ -58,9 +65,6 @@ export function Profile() {
   })
 
   const [isUpdating, setIsUpdating] = useState(false)
-  const [userPhoto, setUserPhoto] = useState(
-    'https:github.com/paulorfsantos17.png',
-  )
 
   const toast = useToast()
 
@@ -98,7 +102,43 @@ export function Profile() {
             ),
           })
         }
-        setUserPhoto(photoURI)
+        const fileExtension = photoSelected.assets[0].uri.split('.').pop()
+
+        const photoFile: PhotoFileProps = {
+          uri: photoURI,
+          type: photoSelected.assets[0].mimeType,
+          name: `${user.name}.${fileExtension}`.toLowerCase(),
+        }
+
+        const photoBlob = photoFile as unknown as Blob
+
+        const userPhotoUploadForm = new FormData()
+        userPhotoUploadForm.append('avatar', photoBlob)
+
+        const avatarUpdatedResponse = await api.patch(
+          '/users/avatar',
+          userPhotoUploadForm,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        const userUpdated = user
+        userUpdated.avatar = avatarUpdatedResponse.data.avatar
+        await updateUserProfile(userUpdated)
+
+        toast.show({
+          placement: 'top',
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              action="success"
+              title="Foto Atualizada"
+              onClose={() => toast.close(id)}
+            />
+          ),
+        })
       }
     } catch (error) {
       console.log(error)
@@ -160,7 +200,11 @@ export function Profile() {
       <ScrollView contentContainerStyle={{ paddingBottom: 36 }}>
         <Center mt="$6" px="$10">
           <UserPhoto
-            source={{ uri: userPhoto }}
+            source={
+              user.avatar
+                ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                : UserImageDefault
+            }
             alt="Imagem de perfil"
             size="xl"
           />

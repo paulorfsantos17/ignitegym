@@ -38,7 +38,11 @@ export default function ToastMessage({
           {title}
         </ToastTitle>
         {description && (
-          <ToastDescription color="$white" fontFamily="$body">
+          <ToastDescription
+            color="$white"
+            fontFamily="$body"
+            alignSelf="center"
+          >
             {description}
           </ToastDescription>
         )}
