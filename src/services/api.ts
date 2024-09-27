@@ -68,8 +68,6 @@ api.registerInterceptTokenManager = (signOut) => {
     }
 
     const originalRequestConfig = requestError.config
-
-    // Verifique se originalRequestConfig é definido e se headers está presente
     if (!originalRequestConfig) {
       signOut()
       return Promise.reject(
@@ -94,7 +92,7 @@ api.registerInterceptTokenManager = (signOut) => {
           token: data.token,
         })
 
-        setAuthorizationHeader(originalRequestConfig, data.token) // Chamando a função com tipagem correta
+        setAuthorizationHeader(originalRequestConfig, data.token)
         api.defaults.headers.common.Authorization = `Bearer ${data.token}`
         resolve(api(originalRequestConfig))
 
